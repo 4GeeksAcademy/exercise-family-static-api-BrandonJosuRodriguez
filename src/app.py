@@ -30,13 +30,61 @@ def handle_hello():
 
     # this is how you can use the Family datastructure by calling its methods
     members = jackson_family.get_all_members()
-    response_body = {
-        "hello": "world",
-        "family": members
-    }
-
-
+    response_body = members
     return jsonify(response_body), 200
+
+@app.route('/new_member', methods=['POST'])
+def add_member():
+    body = request.get_json()
+    if 'first_name' not in body:
+        return jsonify({'mensaje': 'El campo first_name no puede ir vacio'}), 400
+    if 'age' not in body:
+        return jsonify({'mensaje': 'El campo age no puede ir vacio'}), 400
+    if 'lucky_numbers' not in body:
+        return jsonify({'mensaje': 'El campo lucky_numbers no puede ir vacio'}), 400
+
+    print(body)
+
+    new_member_data = {
+        'id': jackson_family._generateId(),
+        'first_name': body['first_name'],
+        'last_name': jackson_family.last_name,
+        'age': body['age'],
+        'lucky_numbers': body['lucky_numbers']
+    }
+    if 'id' not in body:
+        new_member_data = {
+            'id': jackson_family._generateId(),
+            'first_name': body['first_name'],
+            'last_name': jackson_family.last_name,
+            'age': body['age'],
+            'lucky_numbers': body['lucky_numbers']
+        }
+    else:
+        new_member_data = {
+            'id': jackson_family._generateId(),
+            'first_name': body['first_name'],
+            'last_name': jackson_family.last_name,
+            'age': body['age'],
+            'lucky_numbers': body['lucky_numbers']
+        }
+
+    new_member = jackson_family.add_member(new_member_data)
+    print(new_member_data)
+    return jsonify(new_member)
+
+@app.route('/member/<int:id>', methods=['DELETE'])
+def delete_a_member(id):
+    jackson_family.delete_member(id)
+    return jsonify({"deleted": True}), 200
+
+@app.route('/member/<int:id>', methods=['GET'])
+def get_a_member(id):
+    response = jackson_family.get_member(id)
+    if response == None:
+        return jsonify({'mensaje': 'El familiar no fue encontrado'}), 404
+    return jsonify(response)
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
