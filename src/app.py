@@ -33,7 +33,7 @@ def handle_hello():
     response_body = members
     return jsonify(response_body), 200
 
-@app.route('/new_member', methods=['POST'])
+@app.route('/member', methods=['POST'])
 def add_member():
     body = request.get_json()
     if 'first_name' not in body:
@@ -62,7 +62,7 @@ def add_member():
         }
     else:
         new_member_data = {
-            'id': jackson_family._generateId(),
+            'id': body['id'],
             'first_name': body['first_name'],
             'last_name': jackson_family.last_name,
             'age': body['age'],
@@ -76,7 +76,7 @@ def add_member():
 @app.route('/member/<int:id>', methods=['DELETE'])
 def delete_a_member(id):
     jackson_family.delete_member(id)
-    return jsonify({"deleted": True}), 200
+    return jsonify({"done": True}), 200
 
 @app.route('/member/<int:id>', methods=['GET'])
 def get_a_member(id):
